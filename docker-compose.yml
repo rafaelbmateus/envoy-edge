@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  router:
+    image: envoyproxy/envoy:v1.25-latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+    command: ["/usr/local/bin/envoy", "-c", "/etc/envoy/envoy.yaml", "--service-cluster", "front-proxy", "-l",  "debug"]
+
+  service-one:
+    image: nginx:1.23.3
+    container_name: service-one
+    volumes:
+      - ./services/one/nginx.conf:/etc/nginx/conf.d/default.conf
+
+  service-two:
+    image: nginx:1.23.3
+    container_name: service-two
+    volumes:
+      - ./services/two/nginx.conf:/etc/nginx/conf.d/default.conf
